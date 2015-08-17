@@ -1,5 +1,22 @@
 lcw: Estimate the number of lines in a file.
 ==============================================
+lcw is like ``wc -l`` but faster, less precise, and equally accurate. ::
+
+    usage: lcw [-h] [--sample-size N] [--page-size PAGE_SIZE] [--just-ml] file
+
+    Estimate how many lines are in a file.
+
+    positional arguments:
+      file
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --sample-size N, -n N
+                            How many pages to count (default: 1000)
+      --page-size PAGE_SIZE, -p PAGE_SIZE
+                            Size of an observation (default: 16384)
+      --just-ml, -j         Only print the maximum likelihood estimate (default:
+                            False)
 
 Speed
 --------

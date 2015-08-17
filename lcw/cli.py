@@ -4,13 +4,15 @@ from more_itertools import ilen
 
 from . import lcw
 
-argparser = argparse.ArgumentParser('Estimate how many lines are in a file.')
+argparser = argparse.ArgumentParser('lcw',
+    formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+    description = 'Estimate how many lines are in a file.')
 argparser.add_argument('file', type = argparse.FileType('rb'))
 argparser.add_argument('--sample-size', '-n', type = int, default = 1000, dest = 'n',
-                       help = 'Number of lines to sample for the estimate')
-argparser.add_argument('--just-ml', '-j', action = 'store_true',
-                       help = 'Only print the maximum likelihood estimate')
+                       help = 'How many pages to count')
 argparser.add_argument('--page-size', '-p', type = int, default = 2 ** 14,
+                       help = 'Size of an observation')
+argparser.add_argument('--just-ml', '-j', action = 'store_true',
                        help = 'Only print the maximum likelihood estimate')
 
 def main():
