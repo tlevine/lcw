@@ -98,7 +98,6 @@ def weighted_mean(pairs):
 
 def inverse_cdf(cdf, x):
     for low, high in window(sorted(cdf)):
-        print(low, high)
         if cdf[low] <= x < cdf[high]:
             pairs = (
                 (high, (x - cdf[low])),
