@@ -1,6 +1,6 @@
 import logging
 from collections import Counter
-from random import randint, random
+from random import sample
 import itertools
 
 logger = logging.getLogger(__name__)
@@ -36,15 +36,13 @@ def count(fp, n = 100, character = b'\n', page_size = 2**16):
     elif file_end - file_start < n:
         raise ValueError('Your sample size is larger than the population of bytes in the file.')
 
-    selections = dict()
-    while len(selections) < n:
-        i = randint(0, N) * page_size
-        if i not in selections:
-            fp.seek(i)
-            selections[i] = fp.read(page_size).count(character)
+    def f(i):
+        fp.seek(i * page_size)
+        return fp.read(page_size).count(character)
 
-    E_t_sample = sum(selections.values()) / n
-    Var_t_sample = sum((t - E_t_sample) ** 2 for t in selections.values()) / (n - 1)
+    ts = list(map(f, sorted(sample(range(0, N), n))))
+    E_t_sample = sum(ts) / n
+    Var_t_sample = sum((t - E_t_sample) ** 2 for t in ts) / (n - 1)
 
     # 99% gaussian confidence interval
     z = 2.575829
