@@ -3,9 +3,6 @@ from collections import Counter
 from random import randint, random
 import itertools
 
-from sliding_window import window
-from more_itertools import ilen
-
 logger = logging.getLogger(__name__)
 
 def count(fp, n = 100, character = b'\n', page_size = 2**16):
