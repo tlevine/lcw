@@ -8,6 +8,8 @@ argparser = argparse.ArgumentParser('Estimate how many lines are in a file.')
 argparser.add_argument('file', type = argparse.FileType('rb'))
 argparser.add_argument('--sample-size', '-n', type = int, default = 100, dest = 'n',
                        help = 'Number of lines to sample for the estimate')
+argparser.add_argument('--just-ml', '-j', action = 'store_true',
+                       help = 'Only print the maximum likelihood estimate')
 
 
 def main():
@@ -27,9 +29,12 @@ def main():
     radius = standard_error_of_the_mean * z
 
     maximum_likelihood = filesize / estimated_mean
-    low = filesize / (estimated_mean + radius)
-    high = filesize / (estimated_mean - radius)
-    sys.stdout.write('Between %d and %d lines (99%% confidence)\n' % (low, high))
+    if args.just_ml:
+        sys.stdout.write('%d\n' % maximum_likelihood)
+    else:
+        low = filesize / (estimated_mean + radius)
+        high = filesize / (estimated_mean - radius)
+        sys.stdout.write('Between %d and %d lines (99%% confidence)\n' % (low, high))
 
 if __name__ == '__main__':
     main()
