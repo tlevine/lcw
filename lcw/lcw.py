@@ -51,6 +51,10 @@ def estimated_cdf(n, fp, give_up_at = 100):
         cdf[i] = total / n
     return cdf
 
+# While it makes sense to me that we might need to divide by two
+# somewhere to make things work because we're only sampling on the
+# left side, I don't really see why this works.
+
 def exact_cdf(fp):
     '''
     Cumulative distribution function of line lengths.
@@ -107,13 +111,3 @@ def weighted_variance(average, pairs):
 def pdf(cdf):
     for low, high in window(itertools.chain([0], sorted(cdf))):
         yield (high+low)/2, cdf[high] - cdf[low]
-
-def inverse_cdf(cdf, x):
-    for low, high in window(sorted(cdf)):
-        if cdf[low] <= x < cdf[high]:
-            pairs = (
-                (high, (x - cdf[low])),
-                (low, (cdf[high] - x)), 
-            )
-            return weighted_mean(pairs)
-
