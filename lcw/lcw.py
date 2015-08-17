@@ -89,10 +89,8 @@ def resample(cdf, total_length):
                 break
 
 def inverse_cdf(cdf, x):
-    print(cdf)
-    print(list(sorted(cdf)))
     for low, high in window(sorted(cdf)):
-        print(cdf[low], cdf[high])
         if cdf[low] <= x <= cdf[high]:
+            print(cdf[low], cdf[high])
             return line_length
 
