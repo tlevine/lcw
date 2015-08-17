@@ -64,19 +64,19 @@ def exact_cdf(fp):
     :rtype: collections.Counter
     :returns: Exact cumulative distribution function of line length
     '''
-    absolute_cdf = Counter()
+    negative_absolute_cdf = Counter()
     n = 0
 
     for line in fp:
         for i in range(len(line)):
-            absolute_cdf[i] += 1
+            negative_absolute_cdf[i+1] += 1
             n += 1
 
     cdf = Counter()
     total = 0
-    for i in sorted(absolute_cdf):
-        total += absolute_cdf[i]
-        cdf[i] = total / n
+    for i in sorted(negative_absolute_cdf):
+        total += negative_absolute_cdf[i] / n
+        cdf[i] += total
     return cdf
 
 def resample(cdf, total_length):
@@ -110,4 +110,6 @@ def weighted_variance(average, pairs):
 
 def pdf(cdf):
     for low, high in window(itertools.chain([0], sorted(cdf))):
-        yield (high+low)/2, cdf[high] - cdf[low]
+        print(high, low)
+        print(cdf[high], cdf[low])
+        yield high, cdf[high] - cdf[low]
