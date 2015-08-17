@@ -8,7 +8,7 @@ from more_itertools import ilen
 
 logger = logging.getLogger(__name__)
 
-def count(fp, n = 100, N = None, character = b'\n', page_size = 2**16):
+def count(fp, n = 100, character = b'\n', page_size = 2**16):
     '''
     Estimate how many times a particular character appears in a file.
 
@@ -29,34 +29,38 @@ def count(fp, n = 100, N = None, character = b'\n', page_size = 2**16):
     fp.seek(0, 2)
     file_end = fp.tell()
 
+    # Population size
+    N = int((file_end - file_start) / page_size)
+
     if file_end <= file_start:
         raise ValueError('The file is empty, or you have seeked to a strange part of it.')
-    elif file_end < file_start + page_size
+    elif file_end < file_start + page_size:
         raise ValueError('File is too small; just use "wc -l".')
-
-    if replace and file_end - file_start < n:
+    elif file_end - file_start < n:
         raise ValueError('Your sample size is larger than the population of bytes in the file.')
 
     selections = dict()
     while len(selections) < n:
-        i = randint(file_start, file_end - page_size)
+        i = randint(0, N) * page_size
         if i not in selections:
             fp.seek(i)
             selections[i] = fp.read(page_size).count(character)
 
-    E_x = sum(selections) / n
-    var_x = 
-    se_p = (var_p/n) ** .5
+    E_t_sample = sum(selections.values()) / n
+    Var_t_sample = sum((t - E_t_sample) ** 2 for t in selections.values()) / (n - 1)
 
     # 99% gaussian confidence interval
     z = 2.575829
 
-    # Population size
-    if not N:
-        N = os.stat(fp.name).st_size
+    # Levy & Lemeshow, page 51
+    fpc = (N - n) / N
+    E_t_population = N * E_t_sample
+    Var_t_population = (N ** 2) * fpc * Var_t_sample / n
+    SE_t_population = Var_t_population ** 0.5
+    print(n, N, page_size)
 
     return {
-        'low': (p - z * se_p) * N,
-        'ml': p * N,
-        'high': (p + z * se_p) * N,
+        'low': (E_t_population - z * SE_t_population),
+        'ml': E_t_population,
+        'high': (E_t_population + z * SE_t_population),
     }

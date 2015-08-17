@@ -6,7 +6,7 @@ from . import lcw
 
 argparser = argparse.ArgumentParser('Estimate how many lines are in a file.')
 argparser.add_argument('file', type = argparse.FileType('rb'))
-argparser.add_argument('--sample-size', '-n', type = int, default = 100000, dest = 'n',
+argparser.add_argument('--sample-size', '-n', type = int, default = 100, dest = 'n',
                        help = 'Number of lines to sample for the estimate')
 argparser.add_argument('--just-ml', '-j', action = 'store_true',
                        help = 'Only print the maximum likelihood estimate')
@@ -18,8 +18,7 @@ def main():
         sys.stderr.write('Sample size must be at least one.\n')
         return 1
 
-    stats = lcw.count(args.file, n = args.n, replace = True,
-                      N = os.stat(args.file.name).st_size)
+    stats = lcw.count(args.file, n = args.n)
     if args.just_ml:
         sys.stdout.write('%d\n' % stats['ml'])
     else:
