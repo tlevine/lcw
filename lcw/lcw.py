@@ -57,10 +57,8 @@ def count(fp, n = 100, character = b'\n', page_size = 2**16):
     E_t_population = N * E_t_sample
     Var_t_population = (N ** 2) * fpc * Var_t_sample / n
     SE_t_population = Var_t_population ** 0.5
-    print(n, N, page_size)
 
     return {
-        'low': (E_t_population - z * SE_t_population),
         'ml': E_t_population,
-        'high': (E_t_population + z * SE_t_population),
+        'radius': z * SE_t_population,
     }
