@@ -73,3 +73,18 @@ the string with ``-e``. It will be interpreted as a regular expression
 if you pass ``-r``. The statistical estimates do not account for the
 variable length of regular expression matches, so you are better off
 using plain strings if you care about accuracy.
+
+Future work
+--------------
+I have been thinking about how to quickly sample from lots of files.
+Things like lcw can help us with samples within files, I think this
+could be part of a broader survey plan, with cluster sampling or
+stratification on directories or filenames and multistage sampling,
+using pilot tests to estimate the costs of the sampling of different
+files.
+
+lcw presently uses a simple random sample. Because data in text files
+often vary with their position within the file, (Later lines often
+correspond to later dates.) systematic sampling would be appropriate.
+
+Or, does this already exist so I don't have to write it?
