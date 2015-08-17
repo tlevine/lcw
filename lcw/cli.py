@@ -23,9 +23,8 @@ def main():
 
     filesize = os.stat(args.file.name).st_size
     cdf = lcw.estimated_cdf(args.n, args.file)
-    for i in range(1):
-        x_i = ilen(lcw.resample(cdf, filesize))
-        print(x_i)
+    average = lcw.inverse_cdf(cdf, 0.5)
+    print(average)
 
 if __name__ == '__main__':
     main()

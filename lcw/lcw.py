@@ -29,7 +29,7 @@ def estimated_cdf(n, fp, give_up_at = 100):
     fp.seek(0, 2)
     file_end = fp.tell()
 
-    negative_absolute_cdf = Counter()
+    absolute_cdf = Counter()
     for i in itertools.count():
 
         # Select a random byte.
@@ -37,18 +37,18 @@ def estimated_cdf(n, fp, give_up_at = 100):
 
         line = fp.readline()
         if line.endswith(b'\n'):
-            negative_absolute_cdf[len(line)] += 1
-            if sum(negative_absolute_cdf.values()) == n:
+            absolute_cdf[len(line)] += 1
+            if sum(absolute_cdf.values()) == n:
                 break
 
-        elif i > give_up_at and len(negative_absolute_cdf) < (i / give_up_at):
+        elif i > give_up_at and len(absolute_cdf) < (i / give_up_at):
             raise EnvironmentError('This file probably doesn\'t have enough lines.')
 
     cdf = Counter()
     total = 0
-    for i in sorted(negative_absolute_cdf):
-        total += negative_absolute_cdf[i]
-        cdf[i] = 1 - total / n
+    for i in sorted(absolute_cdf):
+        total += absolute_cdf[i]
+        cdf[i] = total / n
     return cdf
 
 def exact_cdf(fp):
@@ -60,18 +60,18 @@ def exact_cdf(fp):
     :rtype: collections.Counter
     :returns: Exact cumulative distribution function of line length
     '''
-    negative_absolute_cdf = Counter()
+    absolute_cdf = Counter()
     n = 0
 
     for line in fp:
         for i in range(len(line)):
-            negative_absolute_cdf[i] += 1
+            absolute_cdf[i] += 1
             n += 1
 
     cdf = Counter()
     total = 0
-    for i in sorted(negative_absolute_cdf):
-        total += negative_absolute_cdf[i]
+    for i in sorted(absolute_cdf):
+        total += absolute_cdf[i]
         cdf[i] = total / n
     return cdf
 
@@ -87,3 +87,12 @@ def resample(cdf, total_length):
                 yield line_length
                 length += line_length
                 break
+
+def inverse_cdf(cdf, x):
+    print(cdf)
+    print(list(sorted(cdf)))
+    for low, high in window(sorted(cdf)):
+        print(cdf[low], cdf[high])
+        if cdf[low] <= x <= cdf[high]:
+            return line_length
+
