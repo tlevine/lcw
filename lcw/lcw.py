@@ -29,7 +29,8 @@ def estimated_cdf(n, fp, give_up_at = 100):
     fp.seek(0, 2)
     file_end = fp.tell()
 
-    absolute_cdf = Counter()
+    maxline = 0
+    negative_absolute_cdf = Counter()
     for i in itertools.count():
 
         # Select a random byte.
@@ -37,18 +38,20 @@ def estimated_cdf(n, fp, give_up_at = 100):
 
         line = fp.readline()
         if line.endswith(b'\n'):
-            absolute_cdf[len(line)] += 1
-            if sum(absolute_cdf.values()) == n:
+            maxline = max(maxline, len(line))
+            negative_absolute_cdf[len(line) - 1] += 1
+            if sum(negative_absolute_cdf.values()) == n:
                 break
 
-        elif i > give_up_at and len(absolute_cdf) < (i / give_up_at):
+        elif i > give_up_at and len(negative_absolute_cdf) < (i / give_up_at):
             raise EnvironmentError('This file probably doesn\'t have enough lines.')
 
     cdf = Counter()
     total = 0
-    for i in sorted(absolute_cdf):
-        total += absolute_cdf[i]
+    for i in range(1, maxline + 1):
+        total += negative_absolute_cdf[i]
         cdf[i] = total / n
+    print(list(sorted(cdf.items())))
     return cdf
 
 # While it makes sense to me that we might need to divide by two
@@ -77,7 +80,6 @@ def exact_cdf(fp):
     cdf = Counter()
     for i in range(1, maxline + 1):
         cdf[i] = 1 - negative_absolute_cdf[i] / n
-    print(list(sorted(cdf.items())))
     return cdf
 
 def resample(cdf, total_length):

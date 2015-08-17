@@ -22,8 +22,8 @@ def main():
     z = 2.575829
 
     filesize = os.stat(args.file.name).st_size
-   #cdf = lcw.estimated_cdf(args.n, args.file)
-    cdf = lcw.exact_cdf(args.file)
+    cdf = lcw.estimated_cdf(args.n, args.file)
+   #cdf = lcw.exact_cdf(args.file)
     pdf = list(lcw.pdf(cdf))
     estimated_mean = lcw.weighted_mean(pdf)
     standard_error_of_the_mean = (lcw.weighted_variance(estimated_mean, pdf)/args.n)**0.5
