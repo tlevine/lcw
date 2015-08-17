@@ -1,7 +1,5 @@
 import argparse, sys, os, re
 
-from more_itertools import ilen
-
 from . import lcw
 
 argparser = argparse.ArgumentParser('lcw',
