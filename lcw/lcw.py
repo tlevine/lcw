@@ -8,18 +8,17 @@ from more_itertools import ilen
 
 logger = logging.getLogger(__name__)
 
-def count(fp, n = 10000, N = None, replace = False, character = b'\n',
-          page_size = 2**16):
+def count(fp, n = 100, N = None, character = b'\n', page_size = 2**16):
     '''
     Estimate how many times a particular character appears in a file.
 
     If data are appended to the file during the function call,
     the appended data are ignored for the sampling.
+    Sampling is without replacement
 
     :param int n: Number of samples
     :type fp: File-like object
     :param fp: The file to estimate line lengths of
-    :param bool replace: Whether to sample with replacement
     :rtype: collections.Counter
     :returns: Exact cumulative distribution function of line length
     '''
@@ -38,28 +37,15 @@ def count(fp, n = 10000, N = None, replace = False, character = b'\n',
     if replace and file_end - file_start < n:
         raise ValueError('Your sample size is larger than the population of bytes in the file.')
 
-    if replace:
-        selections = list()
-        save = selections.append
-    else:
-        raise NotImplementedError
-        selections = set()
-        save = selections.add
-
-    count = 0
+    selections = dict()
     while len(selections) < n:
-        i = randint(file_start, file_end - 1)
-        if replace or i not in selections:
+        i = randint(file_start, file_end - page_size)
+        if i not in selections:
             fp.seek(i)
-            save(i)
-            count += (fp.read(1) == character)
+            selections[i] = fp.read(page_size).count(character)
 
-    x = count
-    fp.seek(file_end - 1)
-    x += (fp.read(1) == b'\n')
-    
-    p = x / n
-    var_p = p * (1 - p)
+    E_x = sum(selections) / n
+    var_x = 
     se_p = (var_p/n) ** .5
 
     # 99% gaussian confidence interval
