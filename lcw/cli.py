@@ -26,9 +26,14 @@ def main():
 
     max_filename_length = max(len(fp.name) for fp in args.file)
     for fp in args.file:
-        if os.stat(fp.name).st_size > 1.5 * args.page_size:
-            stats = lcw.count(fp, n = args.n, page_size = args.page_size,
-                              pattern = args.pattern, regex = args.regex)
+        if os.stat(fp.name).st_size > args.n * args.page_size:
+            try:
+                stats = lcw.count(fp, n = args.n, page_size = args.page_size,
+                                  pattern = args.pattern, regex = args.regex)
+            except ValueError as e:
+                sys.stderr.write(str(e) + '\n')
+                return 1
+
             template = '%(fn)s%(space)s%(ml)d ± %(radius)d occurrences (99%% confidence)\n'
         else:
             template = '%(fn)s%(space)s%(ml)d occurrences (100%% confidence)\n'

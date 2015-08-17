@@ -27,12 +27,15 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16, regex = False):
     fp.seek(0, 2)
     file_end = fp.tell()
 
+    # Population size
+    # Ignore the last page for now.
+    # To do: Weight the last page lower, proportional to its size.
+    N = int((file_end - file_start) / page_size)
+
     if file_end <= file_start:
         raise ValueError('The file is empty, or you have seeked to a strange part of it.')
-    elif file_end < file_start + page_size:
+    elif N <= n:
         raise ValueError('File is too small; just use "wc -l".')
-    elif file_end - file_start < n:
-        raise ValueError('Your sample size is larger than the population of bytes in the file.')
 
     if regex:
         actual_page_size = page_size
@@ -44,11 +47,6 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16, regex = False):
         def f(i):
             fp.seek(file_start + i * page_size)
             return fp.read(page_size).count(pattern)
-
-    # Population size
-    # Ignore the last page for now.
-    # To do: Weight the last page lower, proportional to its size.
-    N = int((file_end - file_start) / page_size)
 
     ts = list(map(f, sorted(sample(range(0, N), n))))
     E_t_sample = sum(ts) / n
