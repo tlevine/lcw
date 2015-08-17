@@ -98,9 +98,11 @@ def weighted_mean(pairs):
 
 def inverse_cdf(cdf, x):
     for low, high in window(sorted(cdf)):
+        print(low, high)
         if cdf[low] <= x < cdf[high]:
-            denom = cdf[high] - cdf[low]
-            weights = (x - cdf[low]), (cdf[high] - x)
-            print(x, weights)
-            return line_length
+            pairs = (
+                (high, (x - cdf[low])),
+                (low, (cdf[high] - x)), 
+            )
+            return weighted_mean(pairs)
 
