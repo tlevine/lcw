@@ -30,7 +30,6 @@ def estimated_cdf(n, fp, give_up_at = 100):
     file_end = fp.tell()
 
     absolute_cdf = Counter()
-    n_sampled = 0
     for i in itertools.count():
 
         # Select a random byte.
@@ -40,9 +39,8 @@ def estimated_cdf(n, fp, give_up_at = 100):
         if line.endswith(b'\n'):
             for j in range(len(line)):
                 absolute_cdf[j] += 1
-            n_sampled += 1
-            if n_sampled == n:
-                break
+                if sum(absolute_cdf.values()) == n:
+                    break
 
         elif i > give_up_at and len(absolute_cdf) < (i / give_up_at):
             raise EnvironmentError('This file probably doesn\'t have enough lines.')
