@@ -8,7 +8,8 @@ from more_itertools import ilen
 
 logger = logging.getLogger(__name__)
 
-def count(n, fp, replace = False, character = b'\n'):
+def count(fp, n = 10000, N = None, replace = False, character = b'\n',
+          page_size = 2**16):
     '''
     Estimate how many times a particular character appears in a file.
 
@@ -31,6 +32,8 @@ def count(n, fp, replace = False, character = b'\n'):
 
     if file_end <= file_start:
         raise ValueError('The file is empty, or you have seeked to a strange part of it.')
+    elif file_end < file_start + page_size
+        raise ValueError('File is too small; just use "wc -l".')
 
     if replace and file_end - file_start < n:
         raise ValueError('Your sample size is larger than the population of bytes in the file.')
@@ -39,6 +42,7 @@ def count(n, fp, replace = False, character = b'\n'):
         selections = list()
         save = selections.append
     else:
+        raise NotImplementedError
         selections = set()
         save = selections.add
 
@@ -48,9 +52,25 @@ def count(n, fp, replace = False, character = b'\n'):
         if replace or i not in selections:
             fp.seek(i)
             save(i)
-            count += fp.read(1) == character
+            count += (fp.read(1) == character)
 
-    N = os.stat(fp.name).st_size
     x = count
-    p = count / n
-    var_x = n * p  * (1 - p)
+    fp.seek(file_end - 1)
+    x += (fp.read(1) == b'\n')
+    
+    p = x / n
+    var_p = p * (1 - p)
+    se_p = (var_p/n) ** .5
+
+    # 99% gaussian confidence interval
+    z = 2.575829
+
+    # Population size
+    if not N:
+        N = os.stat(fp.name).st_size
+
+    return {
+        'low': (p - z * se_p) * N,
+        'ml': p * N,
+        'high': (p + z * se_p) * N,
+    }
