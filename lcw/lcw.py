@@ -37,10 +37,9 @@ def estimated_cdf(n, fp, give_up_at = 100):
 
         line = fp.readline()
         if line.endswith(b'\n'):
-            for j in range(len(line)):
-                absolute_cdf[j] += 1
-                if sum(absolute_cdf.values()) == n:
-                    break
+            absolute_cdf[len(line)] += 1
+            if sum(absolute_cdf.values()) == n:
+                break
 
         elif i > give_up_at and len(absolute_cdf) < (i / give_up_at):
             raise EnvironmentError('This file probably doesn\'t have enough lines.')
