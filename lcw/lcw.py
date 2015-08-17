@@ -75,7 +75,6 @@ def exact_cdf(fp):
         cdf[i] = total / n
     return cdf
 
-
 def resample(cdf, total_length):
     '''
     Generate a distribution of line lengths with a particular total length.
