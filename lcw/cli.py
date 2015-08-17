@@ -17,6 +17,8 @@ argparser.add_argument('--just-ml', '-j', action = 'store_true',
 argparser.add_argument('--pattern', '-e', default = b'\n',
                        type = lambda x: x.encode('utf-8'),
                        help = 'The pattern to match')
+argparser.add_argument('--regex', '-r', action = 'store_true',
+                       help = 'Use regular expressions (statistically unsound)')
 
 def main():
     args = argparser.parse_args()
