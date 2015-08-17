@@ -16,12 +16,20 @@ def main():
         sys.stderr.write('Sample size must be at least one.\n')
         return 1
 
+    # 99% gaussian confidence interval
+    z = 2.575829
+
     filesize = os.stat(args.file.name).st_size
     cdf = lcw.estimated_cdf(args.n, args.file)
-    average = lcw.inverse_cdf(cdf, 0.5)
-    print(int(filesize / average))
-    print(average)
-    print(lcw.weighted_mean(lcw.pdf(cdf)))
+    pdf = list(lcw.pdf(cdf))
+    estimated_mean = lcw.weighted_mean(pdf)
+    standard_error_of_the_mean = (lcw.weighted_variance(estimated_mean, pdf)/args.n)**0.5
+    radius = standard_error_of_the_mean * z
+
+    maximum_likelihood = filesize / estimated_mean
+    low = filesize / (estimated_mean + radius)
+    high = filesize / (estimated_mean - radius)
+    sys.stdout.write('Between %d and %d lines (99%% confidence)\n' % (low, high))
 
 if __name__ == '__main__':
     main()

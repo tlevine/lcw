@@ -96,9 +96,17 @@ def weighted_mean(pairs):
         n += w
     return t / n
 
+def weighted_variance(average, pairs):
+    t = 0
+    n = 0
+    for x, w in pairs:
+        t += w * ((average - x) ** 2)
+        n += w
+    return t / n
+
 def pdf(cdf):
     for low, high in window(itertools.chain([0], sorted(cdf))):
-        yield cdf[high], high - low
+        yield high, cdf[high] - cdf[low]
 
 def inverse_cdf(cdf, x):
     for low, high in window(sorted(cdf)):
