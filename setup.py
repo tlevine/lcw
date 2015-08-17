@@ -7,7 +7,7 @@ setup(name='lcw',
       description='Estimate the number of lines in a file.',
       url='http://dada.pink/lcw/',
       packages=['lcw'],
-      version='0.0.4',
+      version='0.0.5',
       license='LGPL',
       entry_points = {'console_scripts': ['lcw = lcw.cli:main']},
 )
