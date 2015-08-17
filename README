@@ -26,11 +26,11 @@ It's faster than ``wc -l`` on big files. ::
      1071895374 big-file.csv
 
     $ time lcw big-file.csv
-    2386390 ± 17412 lines (99% confidence)
+    2386238 ± 22903 lines (99% confidence)
 
-    real    0m0.244s
-    user    0m0.201s
-    sys     0m0.037s
+    real    0m0.172s
+    user    0m0.140s
+    sys     0m0.027s
 
     $ time wc -l big-file.csv
      2388430 big-file.csv
