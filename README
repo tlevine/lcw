@@ -2,7 +2,9 @@ lcw: Estimate the number of lines in a file.
 ==============================================
 lcw is like ``wc -l`` but faster, less precise, and equally accurate. ::
 
-    usage: lcw [-h] [--sample-size N] [--page-size PAGE_SIZE] [--just-ml] file
+    usage: lcw [-h] [--sample-size N] [--page-size PAGE_SIZE] [--just-ml]
+               [--pattern PATTERN] [--regex]
+               file
 
     Estimate how many lines are in a file.
 
@@ -17,6 +19,10 @@ lcw is like ``wc -l`` but faster, less precise, and equally accurate. ::
                             Size of an observation (default: 16384)
       --just-ml, -j         Only print the maximum likelihood estimate (default:
                             False)
+      --pattern PATTERN, -e PATTERN
+                            The pattern to match (default: b'\n')
+      --regex, -r           Use regular expressions (statistically unsound)
+                            (default: False)
 
 Speed
 --------
