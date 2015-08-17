@@ -106,7 +106,7 @@ def weighted_variance(average, pairs):
 
 def pdf(cdf):
     for low, high in window(itertools.chain([0], sorted(cdf))):
-        yield high, cdf[high] - cdf[low]
+        yield (high+low)/2, cdf[high] - cdf[low]
 
 def inverse_cdf(cdf, x):
     for low, high in window(sorted(cdf)):
