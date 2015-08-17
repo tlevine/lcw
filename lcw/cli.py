@@ -10,7 +10,7 @@ argparser.add_argument('--sample-size', '-n', type = int, default = 1000, dest =
                        help = 'Number of lines to sample for the estimate')
 argparser.add_argument('--just-ml', '-j', action = 'store_true',
                        help = 'Only print the maximum likelihood estimate')
-argparser.add_argument('--page-size', '-p', type = int, default = 2 ** 16,
+argparser.add_argument('--page-size', '-p', type = int, default = 2 ** 14,
                        help = 'Only print the maximum likelihood estimate')
 
 def main():
