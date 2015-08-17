@@ -71,6 +71,7 @@ def exact_cdf(fp):
         for i in range(len(line)):
             negative_absolute_cdf[i+1] += 1
             n += 1
+    print(negative_absolute_cdf)
 
     cdf = Counter()
     total = 0
@@ -110,6 +111,4 @@ def weighted_variance(average, pairs):
 
 def pdf(cdf):
     for low, high in window(itertools.chain([0], sorted(cdf))):
-        print(high, low)
-        print(cdf[high], cdf[low])
         yield high, cdf[high] - cdf[low]
