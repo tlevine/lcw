@@ -32,9 +32,9 @@ def main():
                 sys.stderr.write(str(e) + '\n')
                 return 1
 
-            template = '%(fn)s%(space)s%(ml)d ± %(radius)d occurrences (99%% confidence)\n'
+            template = '%(fn)s%(space)s%(ml)d ± %(radius)d %(unit)s (99%% confidence)\n'
         else:
-            template = '%(fn)s%(space)s%(ml)d occurrences (100%% confidence)\n'
+            template = '%(fn)s%(space)s%(ml)d %(unit)s (100%% confidence)\n'
             if args.regex:
                 ml = len(re.findall(args.pattern, fp.read()))
             else:
@@ -44,6 +44,7 @@ def main():
             }
 
         stats.update({
+            'unit': 'lines' if args.pattern == b'\n' else 'occurrences',
             'fn': fp.name,
             'space': (max_filename_length + 1 - len(fp.name)) * ' ',
         })
