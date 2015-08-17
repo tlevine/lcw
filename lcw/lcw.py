@@ -4,7 +4,7 @@ import re
 
 logger = logging.getLogger(__name__)
 
-def count(fp, n = 100, pattern = b'\n', page_size = 2**16):
+def count(fp, n = 100, pattern = b'\n', page_size = 2**16, regex = False):
     '''
     Estimate how many times a particular pattern appears in a file.
 
@@ -15,12 +15,13 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16):
     :param int n: Number of samples
     :type fp: File-like object
     :param fp: The file to estimate line lengths of
+    :type pattern: Bytes or compiled regex
+    :param pattern: The pattern to match
     :rtype: dict
     :returns: Stats results
     '''
     if n < 0:
         raise ValueError('Sample size must be greater than zero.')
-    expr = re.compile(pattern)
 
     file_start = fp.tell()
     fp.seek(0, 2)
@@ -36,9 +37,14 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16):
     elif file_end - file_start < n:
         raise ValueError('Your sample size is larger than the population of bytes in the file.')
 
-    def f(i):
-        fp.seek(i * page_size)
-        return sum(1 for _ in re.finditer(expr, fp.read(page_size)))
+    if regex:
+        def f(i):
+            fp.seek(i * page_size)
+            return sum(1 for _ in re.finditer(expr, fp.read(page_size)))
+    else:
+        def f(i):
+            fp.seek(i * page_size)
+            return fp.read(page_size).count(expr)
 
     ts = list(map(f, sorted(sample(range(0, N), n))))
     E_t_sample = sum(ts) / n

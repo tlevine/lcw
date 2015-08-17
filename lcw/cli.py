@@ -28,12 +28,17 @@ def main():
 
 
     if os.stat(args.file.name).st_size > 1.5 * args.page_size:
-        stats = lcw.count(args.file, n = args.n, page_size = args.page_size, pattern = args.pattern)
+        stats = lcw.count(args.file, n = args.n, page_size = args.page_size,
+                          pattern = args.pattern, regex = args.regex)
         template = '%(ml)d ± %(radius)d occurrences (99%% confidence)\n'
     else:
         template = '%(ml)d occurrences (100%% confidence)\n'
+        if args.regex:
+            ml = len(re.findall(args.pattern, args.file.read()))
+        else:
+            ml = args.file.read().count(args.pattern)
         stats = {
-            'ml': len(re.findall(args.pattern, args.file.read()))
+            'ml': ml
         }
 
     if args.just_ml:
