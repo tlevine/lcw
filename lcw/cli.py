@@ -10,7 +10,8 @@ argparser.add_argument('--sample-size', '-n', type = int, default = 1000, dest =
                        help = 'Number of lines to sample for the estimate')
 argparser.add_argument('--just-ml', '-j', action = 'store_true',
                        help = 'Only print the maximum likelihood estimate')
-
+argparser.add_argument('--page-size', '-p', type = int, default = 2 ** 16,
+                       help = 'Only print the maximum likelihood estimate')
 
 def main():
     args = argparser.parse_args()
@@ -18,11 +19,20 @@ def main():
         sys.stderr.write('Sample size must be at least one.\n')
         return 1
 
-    stats = lcw.count(args.file, n = args.n)
+
+    if os.stat(args.file.name).st_size > 1.5 * args.page_size:
+        stats = lcw.count(args.file, n = args.n, page_size = args.page_size)
+        template = '%(ml)d ± %(radius)d lines (99%% confidence)\n'
+    else:
+        template = '%(ml)d lines (100%% confidence)\n'
+        stats = {
+            'ml': args.file.read().count(b'\n')
+        }
+
     if args.just_ml:
         sys.stdout.write('%d\n' % stats['ml'])
     else:
-        sys.stdout.write('%(ml)d ± %(radius)d lines (99%% confidence)\n' % stats)
+        sys.stdout.write(template % stats)
 
 if __name__ == '__main__':
     main()
