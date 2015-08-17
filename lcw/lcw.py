@@ -27,9 +27,6 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16, regex = False):
     fp.seek(0, 2)
     file_end = fp.tell()
 
-    # Population size
-    N = int((file_end - file_start) / page_size)
-
     if file_end <= file_start:
         raise ValueError('The file is empty, or you have seeked to a strange part of it.')
     elif file_end < file_start + page_size:
@@ -38,13 +35,20 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16, regex = False):
         raise ValueError('Your sample size is larger than the population of bytes in the file.')
 
     if regex:
+        actual_page_size = page_size
         def f(i):
-            fp.seek(i * page_size)
-            return sum(1 for _ in re.finditer(expr, fp.read(page_size)))
+            fp.seek(file_start + i * page_size)
+            return sum(1 for _ in re.finditer(pattern, fp.read(page_size)))
     else:
+        actual_page_size = page_size + 1 - len(pattern)
         def f(i):
-            fp.seek(i * page_size)
-            return fp.read(page_size).count(expr)
+            fp.seek(file_start + i * page_size)
+            return fp.read(page_size).count(pattern)
+
+    # Population size
+    # Ignore the last page for now.
+    # To do: Weight the last page lower, proportional to its size.
+    N = int((file_end - file_start) / page_size)
 
     ts = list(map(f, sorted(sample(range(0, N), n))))
     E_t_sample = sum(ts) / n
@@ -55,7 +59,7 @@ def count(fp, n = 100, pattern = b'\n', page_size = 2**16, regex = False):
 
     # Levy & Lemeshow, page 51
     fpc = (N - n) / N
-    E_t_population = N * E_t_sample
+    E_t_population = N * E_t_sample * (page_size / actual_page_size)
     Var_t_population = (N ** 2) * fpc * Var_t_sample / n
     SE_t_population = Var_t_population ** 0.5
 
