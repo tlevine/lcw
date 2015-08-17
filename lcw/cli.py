@@ -20,6 +20,8 @@ def main():
     cdf = lcw.estimated_cdf(args.n, args.file)
     average = lcw.inverse_cdf(cdf, 0.5)
     print(int(filesize / average))
+    print(average)
+    print(lcw.weighted_mean(lcw.pdf(cdf)))
 
 if __name__ == '__main__':
     main()

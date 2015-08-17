@@ -96,6 +96,10 @@ def weighted_mean(pairs):
         n += w
     return t / n
 
+def pdf(cdf):
+    for low, high in window(itertools.chain([0], sorted(cdf))):
+        yield cdf[high], high - low
+
 def inverse_cdf(cdf, x):
     for low, high in window(sorted(cdf)):
         if cdf[low] <= x < cdf[high]:
