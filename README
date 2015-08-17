@@ -77,9 +77,9 @@ using plain strings if you care about accuracy.
 Future work
 --------------
 I have been thinking about how to quickly sample from lots of files.
-Things like lcw can help us with samples within files, I think this
+Things like lcw can help us with samples within files, but it can be
 could be part of a broader survey plan, with cluster sampling or
-stratification on directories or filenames and multistage sampling,
+stratification on directories or filenames and with multistage sampling,
 using pilot tests to estimate the costs of the sampling of different
 files.
 
