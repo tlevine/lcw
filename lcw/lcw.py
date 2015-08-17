@@ -67,17 +67,17 @@ def exact_cdf(fp):
     negative_absolute_cdf = Counter()
     n = 0
 
+    total = 0
     for line in fp:
+        total += 1
         for i in range(len(line)):
             negative_absolute_cdf[i+1] += 1
-            n += 1
-    print(negative_absolute_cdf)
+        n += 1
 
     cdf = Counter()
-    total = 0
-    for i in sorted(negative_absolute_cdf):
-        total += negative_absolute_cdf[i] / n
-        cdf[i] += total
+    for i in negative_absolute_cdf:
+        cdf[i] = 1 - (negative_absolute_cdf[i] - 1) / n
+   #print(list(sorted(cdf.items())))
     return cdf
 
 def resample(cdf, total_length):
