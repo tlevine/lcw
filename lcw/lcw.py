@@ -88,9 +88,19 @@ def resample(cdf, total_length):
                 length += line_length
                 break
 
+def weighted_mean(pairs):
+    t = 0
+    n = 0
+    for x, w in pairs:
+        t += x * w
+        n += w
+    return t / n
+
 def inverse_cdf(cdf, x):
     for low, high in window(sorted(cdf)):
-        if cdf[low] <= x <= cdf[high]:
-            print(cdf[low], cdf[high])
+        if cdf[low] <= x < cdf[high]:
+            denom = cdf[high] - cdf[low]
+            weights = (x - cdf[low]), (cdf[high] - x)
+            print(x, weights)
             return line_length
 
